@@ -39,7 +39,15 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.BirthDate)
+            @Model.BirthDate.ToString("dd/MM/yyyy")
+        </dd>
+
+        <dt>
+            Age
+        </dt>
+
+        <dd id="contactAge">
+            @Model.BirthDate.ToString("yyyy/MM/dd")
         </dd>
 
     </dl>
@@ -48,3 +56,7 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.ContactID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/Views/Contact/Details.js")"></script>
+}
