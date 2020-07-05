@@ -51,6 +51,21 @@
         </dd>
 
     </dl>
+    <hr />
+    <h4>Addresses</h4>
+    <ul>
+        @foreach (var d in Model.Addresses)
+        {
+            <li class="list-group-item">
+
+                <div class="row">
+                    <div class="col-xs-5">
+                        @d.Description
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ContactID }) |

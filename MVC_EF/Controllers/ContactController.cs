@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVC_EF.DAL;
 using MVC_EF.Models;
+using MVC_EF.ViewModels;
 
 namespace MVC_EF.Controllers
 {
@@ -50,7 +51,7 @@ namespace MVC_EF.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "ContactID,AreaID,FirstName,LastName,BirthDate")] Contact contact)
+        public async Task<ActionResult> Create([Bind(Include = "ContactID,AreaID,FirstName,LastName,BirthDate,Addresses")] Contact contact)
         {
             if (ModelState.IsValid)
             {
@@ -120,6 +121,59 @@ namespace MVC_EF.Controllers
             db.Contacts.Remove(contact);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult CreateWithAddress()
+        {
+            ViewBag.AreaID = new SelectList(db.Areas, "AreaID", "Name");
+            return View(new ContactAddressViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateWithAddress(ContactAddressViewModel model, string action)
+        {
+            if (action.Equals("save"))
+            {
+                if (model.IsValidContact())
+                {
+                    db.Contacts.Add(model.ToModel());
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("Contact", "Invalid Contact");
+                }
+            }
+            else if (action.Equals("add_address"))
+            {
+                if (model.ValidAddressAdded())
+                {
+                    model.AddItemAddress();
+                }
+                else
+                {
+                    ModelState.AddModelError("Add_Address", "Invalid Address");
+                }
+
+            }else if (action.Equals("remove_address"))
+            {
+                model.RemoveItemAddress();
+            }
+
+            ViewBag.AreaID = new SelectList(db.Areas, "AreaID", "Name", model.AreaID);
+            return View(model);
+
+            if (ModelState.IsValid)
+            {
+                //db.Contacts.Add(model);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.AreaID = new SelectList(db.Areas, "AreaID", "Name", model.AreaID);
+            return View(model);
         }
 
         protected override void Dispose(bool disposing)

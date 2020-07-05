@@ -1,16 +1,16 @@
-﻿@model MVC_EF.Models.Contact
+﻿@model MVC_EF.ViewModels.ContactAddressViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "CreateWithAddress";
 }
 
-<h2>Create</h2>
+<h2>CreateWithAddress</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Contact</h4>
         <hr />
@@ -47,26 +47,58 @@
             </div>
         </div>
 
-        <div id="addresses_form">
-            <hr />
-            <div id="addresses_container">
-                <div class="form-group">
-                    @Html.Label("Address", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-4">
-                        @Html.Editor("Address", new { htmlAttributes = new { @class = "form-control" } })
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="remove_address">Remove</button>
-                    </div>
-                </div>
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressDescription, new { htmlAttributes = new { @id = "AddressDescription", @class = "form-control" } })
+                @Html.ValidationMessage("Add_Address", null, new { @class = "label label-danger" })
             </div>
-            
-            <button type="button" id="add_address">Add address</button>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <button type="submit" value="add_address" name="action">
+                    Add address
+                </button>
+            </div>
+        </div>
+
+        <hr />
+
+        <ul>
+            @foreach (var d in Model.Addresses)
+            {
+                var i = Model.Addresses.IndexOf(d);
+
+                <li class="list-group-item">
+                    <!-- Modelo -->
+                    @Html.Hidden("Addresses[" + i + "].Description", d.Description)
+                    @Html.Hidden("Addresses[" + i + "].Remove", d.Remove, new { @class = "remove_address" })
+
+                    <div class="row">
+                        <div class="col-xs-1 text-right">
+                            <button class="btn_remove_address" type="submit" value="remove_address" name="action">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-5">
+                            @d.Description
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <hr />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.ValidationMessage("Contact", null, new { @class = "label label-danger" })
+                <button type="submit" value="save" name="action">
+                    Save
+                </button>
             </div>
         </div>
     </div>
@@ -78,4 +110,5 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script src="@Url.Content("~/Scripts/Views/Contact/CreateWithAddress.js")"></script>
 }
